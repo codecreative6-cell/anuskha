@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport-fit=cover: handles iPhone notch (safe area insets) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <!-- theme-color: browser chrome colour on Android/Chrome -->
+  <meta name="theme-color" content="#07040e">
+  <meta name="robots" content="noindex">
+  <title>Happy Birthday Anuskha ✨</title>
+
+  <!-- FIX: preconnect cuts ~200ms off Google Fonts load time -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Bodoni+Moda:wght@300&family=Montserrat:wght@300&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400;1,600&family=Great+Vibes&family=Raleway:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- Music toggle button (visual indicator — wire up an <audio> element to activate) -->
+  <button id="mus" title="Music" aria-label="Toggle music">
+    <div class="bars" aria-hidden="true">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+  </button>
+
+  <!-- FIX: cursor elements — JS shows only on pointer-fine (mouse) devices -->
+  <div id="cur" aria-hidden="true"></div>
+  <div id="cur-r" aria-hidden="true"></div>
+
+  <!-- INTRO OVERLAY -->
+  <div id="intro" role="presentation" aria-hidden="true">
+    <div class="i-name">Anuskha</div>
+    <div class="i-sub">A celebration just for you</div>
+    <div class="i-bar"></div>
+  </div>
+
+  <!-- PARTICLE CANVAS -->
+  <canvas id="pc" aria-hidden="true"></canvas>
+
+  <!-- LIGHTBOX -->
+  <div id="lb" role="dialog" aria-modal="true" aria-label="Photo viewer">
+    <button class="lb-x" id="lbX" aria-label="Close">×</button>
+    <button class="lb-a" id="lb-p" aria-label="Previous photo">‹</button>
+    <img id="lb-img" src="" alt="Anuskha">
+    <button class="lb-a" id="lb-n" aria-label="Next photo">›</button>
+    <div class="lb-info" id="lb-ct" aria-live="polite"></div>
+  </div>
+
+  <!-- ════ HERO ════ -->
+  <section class="hero" aria-label="Birthday greeting">
+    <div class="hero-l">
+      <div class="h-tag">✦ &nbsp; An extraordinary day &nbsp; ✦</div>
+      <div class="h-title"><span>Happy Birthday,</span></div>
+      <div class="h-name"><span>Anuskha</span></div>
+      <div class="h-div">
+        <div class="h-dot"></div>
+      </div>
+      <p class="h-sub">Today the universe pauses its endless motion — just to celebrate you, your smile, and every
+        beautiful chapter you've written.</p>
+      <div class="h-date">✦ &nbsp; A day as radiant as you &nbsp; ✦</div>
+    </div>
+    <div class="hero-r">
+      <div class="hero-ri">
+        <!-- FIX: fetchpriority=high + loading=eager → hero image loads first -->
+        <img src="img/img%20(1).jpg" alt="Anuskha" fetchpriority="high" loading="eager">
+      </div>
+    </div>
+    <div id="bl" aria-hidden="true"></div>
+  </section>
+
+  <!-- BAND 1 -->
+  <div class="band" aria-hidden="true">
+    <div class="band-t">
+      <span>Happy Birthday Anuskha</span><span><em>✦</em></span><span>You Are Pure
+        Magic</span><span><em>✦</em></span><span>Celebrate Every Moment</span><span><em>✦</em></span><span>You Shine So
+        Bright</span><span><em>✦</em></span><span>Today Is All Yours</span><span><em>✦</em></span>
+      <span>Happy Birthday Anuskha</span><span><em>✦</em></span><span>You Are Pure
+        Magic</span><span><em>✦</em></span><span>Celebrate Every Moment</span><span><em>✦</em></span><span>You Shine So
+        Bright</span><span><em>✦</em></span><span>Today Is All Yours</span><span><em>✦</em></span>
+    </div>
+  </div>
+
+  <!-- WISH -->
+  <section class="wish">
+    <div class="wf rv">
+      <img src="img/img%20(12).jpg" alt="Anuskha" loading="lazy">
+      <div class="wdeco" aria-hidden="true"></div>
+    </div>
+    <div class="wt rv">
+      <div class="sl">From the heart</div>
+      <h2>Here's to a girl<br>who lights up every<br><em>room she walks into</em></h2>
+      <p>You have this rare, luminous gift — the ability to make the world feel warmer, softer, and more alive just by
+        being in it.</p>
+      <p>Today isn't just a birthday. It's the universe celebrating that you exist — and we are all so much richer for
+        it.</p>
+      <p>May every single wish you've whispered to yourself find its way to you this year.</p>
+      <div class="wsig">With love, always ♡</div>
+    </div>
+  </section>
+
+  <!-- ════ GALLERY ════ -->
+  <section class="gal" aria-label="Photo gallery">
+
+    <!-- Header -->
+    <div class="gal-head rv">
+      <h2>A Collection of<span>Beautiful Moments</span></h2>
+      <div class="gal-ct">
+        <div class="gal-counter" id="counter" aria-label="37 memories">0</div>
+        memories
+      </div>
+    </div>
+
+    <!-- CATEGORY TABS -->
+    <div class="gtabs rv" id="galTabs" role="tablist" aria-label="Filter gallery"></div>
+
+    <!-- SPOTLIGHT MOSAIC -->
+    <div class="spot-wrap rv" aria-label="Spotlight moments">
+      <div class="spot-label">✦ &nbsp; Spotlight Moments &nbsp; ✦</div>
+      <div class="spot-grid" id="spotGrid"></div>
+    </div>
+
+    <!-- HORIZONTAL DRAG SCROLL ROW 1 -->
+    <section class="scroll-gal rv" aria-label="Scroll gallery">
+      <div class="sg-head">
+        <h3>Every Vibe</h3>
+        <div class="sg-head-rule"></div>
+      </div>
+      <div style="position:relative">
+        <div class="srow-fade srow-fade-l"></div>
+        <div class="srow" id="srow1"></div>
+        <div class="srow-fade srow-fade-r"></div>
+      </div>
+    </section>
+
+    <!-- CAROUSEL -->
+    <div class="car-wrap rv" aria-label="Photo highlights carousel">
+      <div class="car-label">✦ &nbsp; Highlights &nbsp; ✦</div>
+      <div class="car-scene">
+        <div class="car-center-glow" aria-hidden="true"></div>
+        <div class="car-ring" id="carRing"></div>
+      </div>
+      <div class="car-hint" aria-hidden="true">Hover to pause &nbsp;·&nbsp; Click to open</div>
+    </div>
+
+    <!-- HORIZONTAL DRAG SCROLL ROW 2 -->
+    <section class="scroll-gal" aria-label="More memories">
+      <div class="sg-head rv">
+        <h3>More Memories</h3>
+        <div class="sg-head-rule"></div>
+      </div>
+      <div style="position:relative">
+        <div class="srow-fade srow-fade-l"></div>
+        <div class="srow" id="srow2"></div>
+        <div class="srow-fade srow-fade-r"></div>
+      </div>
+    </section>
+
+    <!-- POLAROID WALL -->
+    <div class="pol-wrap">
+      <div class="pol-label rv">✦ &nbsp; Pinned Memories &nbsp; ✦</div>
+      <div class="pol-wall" id="polWall" role="list" aria-label="Polaroid memories"></div>
+    </div>
+
+    <!-- MASONRY -->
+    <div class="mgal-head rv">
+      <h3>Every Single Moment</h3>
+      <span>Full collection</span>
+    </div>
+    <div class="mgrid" id="mgrid" role="list" aria-label="Photo collection"></div>
+
+  </section>
+
+  <!-- FILMSTRIP -->
+  <section class="film" aria-label="Photo filmstrip">
+    <div class="film-lbl rv">The Story So Far</div>
+    <!-- FIX: ft-outer wrapper — lets CSS make only the track scrollable on touch,
+             while the label above stays in a normal flow -->
+    <div class="ft-outer">
+      <div class="ftrack" id="ft"></div>
+    </div>
+  </section>
+
+  <!-- BAND 2 -->
+  <div class="band" aria-hidden="true">
+    <div class="band-t" style="animation-direction:reverse">
+      <span>Beautiful Soul</span><span><em>✦</em></span><span>Adventure Awaits</span><span><em>✦</em></span><span>Keep
+        On Shining</span><span><em>✦</em></span><span>The Best Is Yet To Come</span><span><em>✦</em></span><span>Dream
+        Big Always</span><span><em>✦</em></span>
+      <span>Beautiful Soul</span><span><em>✦</em></span><span>Adventure Awaits</span><span><em>✦</em></span><span>Keep
+        On Shining</span><span><em>✦</em></span><span>The Best Is Yet To Come</span><span><em>✦</em></span><span>Dream
+        Big Always</span><span><em>✦</em></span>
+    </div>
+  </div>
+
+  <!-- QUOTE -->
+  <section class="qsec">
+    <blockquote class="rv">"She is clothed in <span>strength and dignity</span>,<br>and she laughs without fear<br>of
+      the future."</blockquote>
+    <div class="qrule rv" aria-hidden="true"></div>
+    <div class="qattr rv">To Anuskha — on her special day</div>
+  </section>
+
+  <!-- CLOSING -->
+  <section class="clos">
+    <div class="cr" style="width:420px;height:420px" aria-hidden="true"></div>
+    <div class="cr" style="width:650px;height:650px" aria-hidden="true"></div>
+    <div class="cr" style="width:880px;height:880px" aria-hidden="true"></div>
+    <div style="font-size:.62rem;letter-spacing:.55em;text-transform:uppercase;color:var(--rg);margin-bottom:1rem"
+      class="rv">The Grand Finale</div>
+    <h2 class="rv">Happy Birthday!</h2>
+    <p class="rv">May every candle you blow out carry a wish that blooms into reality. May every sunrise this year bring
+      you closer to the life you dream of. 🎂</p>
+
+    <!-- INTERACTIVE CAKE -->
+    <div class="cake-area rv">
+
+      <div class="cake-glow"></div>
+
+      <!-- CANDLES -->
+      <div class="candles-row">
+
+        <div class="candle">
+          <div class="candle-flame"></div>
+          <div class="candle-stick"></div>
+          <div class="candle-smoke"></div>
+        </div>
+
+        <div class="candle">
+          <div class="candle-flame"></div>
+          <div class="candle-stick"></div>
+          <div class="candle-smoke"></div>
+        </div>
+
+        <div class="candle">
+          <div class="candle-flame"></div>
+          <div class="candle-stick"></div>
+          <div class="candle-smoke"></div>
+        </div>
+
+        <div class="candle">
+          <div class="candle-flame"></div>
+          <div class="candle-stick"></div>
+          <div class="candle-smoke"></div>
+        </div>
+
+        <div class="candle">
+          <div class="candle-flame"></div>
+          <div class="candle-stick"></div>
+          <div class="candle-smoke"></div>
+        </div>
+
+      </div>
+
+      <!-- TOP -->
+      <div class="cake-tier tier-1">
+
+        <div class="tier-icing">
+          <svg viewBox="0 0 100 20" preserveAspectRatio="none">
+            <path d="
+            M0,8
+            C5,18 10,18 15,8
+            C20,0 25,0 30,8
+            C35,18 40,18 45,8
+            C50,0 55,0 60,8
+            C65,18 70,18 75,8
+            C80,0 85,0 90,8
+            C95,18 100,18 100,8
+            L100,0 L0,0 Z" fill="#f5ede2" />
+          </svg>
+        </div>
+
+        <div class="tier-pearls">
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+        </div>
+
+      </div>
+
+      <!-- MIDDLE -->
+      <div class="cake-tier tier-2">
+
+        <div class="tier-icing">
+          <svg viewBox="0 0 100 20" preserveAspectRatio="none">
+            <path d="
+            M0,8
+            C5,18 10,18 15,8
+            C20,0 25,0 30,8
+            C35,18 40,18 45,8
+            C50,0 55,0 60,8
+            C65,18 70,18 75,8
+            C80,0 85,0 90,8
+            C95,18 100,18 100,8
+            L100,0 L0,0 Z" fill="#f5ede2" />
+          </svg>
+        </div>
+
+        <div class="tier-name">
+          Anuskha
+        </div>
+
+        <div class="tier-pearls">
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+        </div>
+
+      </div>
+
+      <!-- BASE -->
+      <div class="cake-tier tier-3">
+
+        <div class="tier-icing">
+          <svg viewBox="0 0 100 20" preserveAspectRatio="none">
+            <path d="
+            M0,8
+            C5,18 10,18 15,8
+            C20,0 25,0 30,8
+            C35,18 40,18 45,8
+            C50,0 55,0 60,8
+            C65,18 70,18 75,8
+            C80,0 85,0 90,8
+            C95,18 100,18 100,8
+            L100,0 L0,0 Z" fill="#f5ede2" />
+          </svg>
+        </div>
+
+        <div class="tier-base-text">
+          ✨ Happy Birthday ✨
+        </div>
+
+        <div class="tier-pearls">
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+          <div class="pearl"></div>
+        </div>
+
+      </div>
+
+      <div class="cake-plate"></div>
+
+      <button class="btn-blow">
+        Blow Candles
+      </button>
+
+      <div class="wish-made">
+        Wish Made ✨
+      </div>
+
+    </div>
+
+    <div class="ch rv" aria-hidden="true">🤍 &nbsp; 🌸 &nbsp; 🤍</div>
+  </section>
+  <footer>Made with 💛 for Anuskha &nbsp;✦&nbsp; A day as beautiful as you</footer>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
